@@ -24,10 +24,7 @@ if (empty($raw)) {
 // Vulnerable: explicitly re-enable external entity loading (disabled by default in PHP 8.x)
 // This is intentionally insecure for CTF purposes
 libxml_set_external_entity_loader(function ($public, $system, $context) {
-    if (is_file($system)) {
-        return $system;
-    }
-    return null;
+    return fopen($system, 'r');
 });
 
 libxml_use_internal_errors(true);
