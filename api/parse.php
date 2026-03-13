@@ -21,7 +21,15 @@ if (empty($raw)) {
     exit;
 }
 
-// Vulnerable: LIBXML_NOENT resolves external entities (XXE)
+// Vulnerable: explicitly re-enable external entity loading (disabled by default in PHP 8.x)
+// This is intentionally insecure for CTF purposes
+libxml_set_external_entity_loader(function ($public, $system, $context) {
+    if (is_file($system)) {
+        return $system;
+    }
+    return null;
+});
+
 libxml_use_internal_errors(true);
 $dom = new DOMDocument();
 $dom->loadXML($raw, LIBXML_NOENT | LIBXML_DTDLOAD);
